@@ -1,0 +1,122 @@
+[
+    {
+        "name": "pants",
+        "category": "bottom",
+        "color": "Black",
+        "weather": 3,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 2
+    },
+    {
+        "name": "Blue Sweater",
+        "category": "top",
+        "color": "Blue",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 10,
+        "preference_score": 9,
+        "volume": 1
+    },
+    {
+        "name": "Coat",
+        "category": "Top",
+        "color": "black",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 1,
+        "preference_score": 9,
+        "volume": 4
+    },
+    {
+        "name": "Jeans",
+        "category": "bottom",
+        "color": "Pink",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 11,
+        "preference_score": 13,
+        "volume": 2
+    },
+    {
+        "name": "Heavy Coat",
+        "category": "top",
+        "color": "Gray",
+        "weather": 1,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 4
+    },
+    {
+        "name": "Thermal Pants",
+        "category": "bottom",
+        "color": "Black",
+        "weather": 1,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 2
+    },
+    {
+        "name": "Heavy Coat",
+        "category": "top",
+        "color": "black",
+        "weather": 1,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 4
+    },
+    {
+        "name": "Hoodie",
+        "category": "top",
+        "color": "black",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 1,
+        "preference_score": 14,
+        "volume": 1
+    },
+    {
+        "name": "denim",
+        "category": "bottom",
+        "color": "blue",
+        "weather": 1,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 2
+    },
+    {
+        "name": "trousous",
+        "category": "bottom",
+        "color": "red",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 1,
+        "preference_score": 9,
+        "volume": 2
+    },
+    {
+        "name": "Hoodie",
+        "category": "top",
+        "color": "red",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 1
+    },
+    {
+        "name": "Sweater",
+        "category": "top",
+        "color": "black",
+        "weather": 2,
+        "formal_level": 2,
+        "usage_count": 0,
+        "preference_score": 10,
+        "volume": 1
+    }
+]
