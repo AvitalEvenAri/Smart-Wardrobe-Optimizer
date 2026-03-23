@@ -5,14 +5,16 @@ from models import ClothingItem
 from wardrobe_manager import Wardrobe
 from weather_service import WeatherService
 
-# אתחול Colorama לתצוגה צבעונית בטרמינל
+# Initialize Colorama for ANSI escape character support on Windows and Mac
 init(autoreset=True)
 
+# Load environment variables for secure API key management
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
 def display_menu():
+    """Renders the main command-line interface menu."""
     print(Fore.CYAN + Style.BRIGHT + "\n--- My Smart Wardrobe (Engineering Edition) ---")
     print(f"{Fore.YELLOW}1.{Fore.WHITE} Add a new item")
     print(f"{Fore.YELLOW}2.{Fore.WHITE} Get an outfit suggestion (Personalized)")
@@ -25,10 +27,12 @@ def display_menu():
 
 
 def main():
+    """Main application orchestrator handling the user interaction loop."""
     if not API_KEY:
         print(Fore.RED + "Error: API Key not found. Please check your .env file.")
         return
 
+    # Initialize core services
     my_wardrobe = Wardrobe()
     weather_service = WeatherService(API_KEY)
 
@@ -36,6 +40,7 @@ def main():
         choice = display_menu()
 
         if choice == '1':
+            # Data Entry: Capture metadata for a new ClothingItem
             name = input("Item name: ")
             cat = input("Category (Top/Bottom): ")
             color = input("Color: ")
@@ -47,7 +52,7 @@ def main():
                 print(Fore.RED + "Invalid input. Please enter numbers.")
 
         elif choice == '2':
-            # Personalized Suggestion with Feedback Loop
+            # Personalized Recommendation Engine with Reinforcement Feedback
             city = input("Enter city: ")
             score = weather_service.get_weather_score(city)
             if score:
@@ -61,7 +66,7 @@ def main():
                         print(f"{Fore.WHITE}Top:    {top}")
                         print(f"{Fore.WHITE}Bottom: {bottom}")
 
-                        # הוספת Feedback Loop (למידת העדפות משתמש)
+                        # Capturing feedback to refine the User Preference Engine
                         feedback = input(Fore.CYAN + "\nDid you like this suggestion? (y/n): ").lower()
                         if feedback == 'y':
                             my_wardrobe.update_preference(top, True)
@@ -79,6 +84,7 @@ def main():
                 print(Fore.RED + "Could not retrieve weather data.")
 
         elif choice == '3':
+            # Display current state of the wardrobe database
             print(Fore.BLUE + Style.BRIGHT + "\n--- Current Wardrobe ---")
             if not my_wardrobe.items:
                 print("Your wardrobe is empty.")
@@ -87,10 +93,12 @@ def main():
                     print(item)
 
         elif choice == '4':
+            # Item Deletion Logic
             name = input("Enter the name of the item to remove: ")
             my_wardrobe.remove_item(name)
 
         elif choice == '5':
+            # Constraint-Based Strategic Packing Optimization
             city = input("Destination city: ")
             try:
                 days = int(input("Duration (1-5 days): "))
@@ -126,9 +134,11 @@ def main():
                 print(Fore.RED + "Invalid input parameters.")
 
         elif choice == '6':
+            # Display Data-Driven Insights
             print(Fore.CYAN + my_wardrobe.get_wardrobe_analytics())
 
         elif choice == '7':
+            # Safe Termination of the application
             print(Fore.RED + Style.BRIGHT + "Closing My Smart Wardrobe. Stay Stylish!")
             break
 
