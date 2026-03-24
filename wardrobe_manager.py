@@ -1,34 +1,34 @@
-import random
+
 import json
 import os
 
 class Wardrobe:
     """
-    Core engine for managing wardrobe data, persistence (JSON),
-    and implementing packing optimization algorithms.
+    Manages the list of clothes, saves them to a file,
+    and picks the best items for trips.
     """
     def __init__(self, storage_file="wardrobe_data.json"):
         """
-        Initializes the wardrobe and restores state from the persistence layer.
+        Starts the wardrobe and loads saved clothes from the file.
         """
         self.items = []
         self.storage_file = storage_file
         self.load_from_file()
 
     def add_item(self, item):
-        """Appends a new ClothingItem to the collection and updates storage."""
+        """Adds a new piece of clothing and saves it to the file."""
         self.items.append(item)
         self.save_to_file()
         print(f"Added {item.name} to your wardrobe.")
 
     def save_to_file(self):
-        """Serializes current wardrobe items to a JSON file for persistence."""
+        """Saves all clothes into a JSON file so they are not lost."""
         data = [vars(item) for item in self.items]
         with open(self.storage_file, 'w') as f:
             json.dump(data, f, indent=4)
 
     def load_from_file(self):
-        """Deserializes items from JSON and reconstructs ClothingItem objects."""
+        """Loads the clothes back from the JSON file into the program."""
         if os.path.exists(self.storage_file):
             try:
                 with open(self.storage_file, 'r') as f:
@@ -40,8 +40,8 @@ class Wardrobe:
 
     def suggest_outfit(self, weather_score, formal_level):
         """
-        Provides a personalized outfit recommendation based on weather and formality.
-        Implements a ranking system based on User Preference Scores.
+        Picks the best Top and Bottom based on weather and formality.
+        It sorts items by 'preference score' to pick what the user likes most.
         """
         tops = [i for i in self.items if i.category.capitalize() == "Top" and
                 i.weather == weather_score and i.formal_level == formal_level]
@@ -51,7 +51,7 @@ class Wardrobe:
         if not tops or not bottoms:
             return None
 
-        # Optimization: Sort items by Preference Score to prioritize user-liked items
+        # Sort to put the most liked clothes at the beginning of the list
         tops.sort(key=lambda x: x.preference_score, reverse=True)
         bottoms.sort(key=lambda x: x.preference_score, reverse=True)
 
@@ -62,8 +62,8 @@ class Wardrobe:
 
     def update_preference(self, item, liked):
         """
-        Refines the User Preference Engine through a reinforcement feedback loop.
-        Positively or negatively adjusts the item's score based on user feedback.
+        Changes the item score based on user feedback.
+        If the user likes it, the score goes up. If not, it goes down.
         """
         if liked:
             item.preference_score += 2
@@ -73,28 +73,27 @@ class Wardrobe:
 
     def get_wardrobe_analytics(self):
         """
-        Generates descriptive analytics regarding wardrobe usage patterns.
-        Identifies most worn items and suggests items for donation (0 usage).
+        Checks which clothes are worn most and which were never used.
         """
         if not self.items:
             return "Wardrobe is empty."
 
-        # Analytical sorting based on historical usage frequency
+        # Sort clothes by how many times they were worn
         sorted_items = sorted(self.items, key=lambda x: x.usage_count, reverse=True)
         most_worn = sorted_items[:3]
 
-        # Identify dormant assets (items never worn)
+        # Find clothes that the user never wore
         never_worn = [i.name for i in self.items if i.usage_count == 0]
 
         analytics = "\n--- Wardrobe Analytics ---"
         analytics += "\nMost worn items:\n" + "\n".join([f"- {i}" for i in most_worn])
         if never_worn:
-            analytics += f"\n\nItems suggested for donation (never worn):\n- " + ", ".join(never_worn)
+            analytics += f"\n\nItems you never wore (maybe donate these?):\n- " + ", ".join(never_worn)
 
         return analytics
 
     def remove_item(self, item_name):
-        """Removes an item from the collection by identifier (name)."""
+        """Deletes a piece of clothing by its name."""
         initial_count = len(self.items)
         self.items = [i for i in self.items if i.name.lower() != item_name.lower()]
 
@@ -108,15 +107,15 @@ class Wardrobe:
 
     def plan_packing_list(self, daily_weather_scores, formal_level, max_volume=10):
         """
-        Executes a Greedy Optimization strategy for travel packing.
-        Prioritizes item reuse to satisfy the volume (Knapsack) constraint.
+        Smart Packing: Tries to pack the smallest amount of clothes for a trip.
+        It prioritizes using the same clothes more than once to save space.
         """
         packing_list = set()
         daily_plan = []
         current_volume = 0
 
         for day, score in enumerate(daily_weather_scores):
-            # Satisfy hard constraints: Filter by weather score and formality
+            # Find clothes that match the weather and formality
             tops = [i for i in self.items if i.category.capitalize() == "Top" and
                     i.weather == score and i.formal_level == formal_level]
             bottoms = [i for i in self.items if i.category.capitalize() == "Bottom" and
@@ -126,13 +125,13 @@ class Wardrobe:
                 daily_plan.append(f"Day {day + 1}: No suitable items found")
                 continue
 
-            # Greedy Choice: Attempt to reuse items already added to the suitcase
+            # Greedy Choice: See if a suitable item is already in the suitcase
             chosen_top = next((t for t in tops if t in packing_list), None)
             chosen_bottom = next((b for b in bottoms if b in packing_list), None)
 
-            # If reuse is not possible, add new items while respecting volume limit
+            # If not in the suitcase, try to add it only if there is enough space
             if not chosen_top:
-                # Prioritize items with smaller volume to optimize suitcase space
+                # Pick the smallest item first to save volume
                 tops.sort(key=lambda x: x.volume)
                 if current_volume + tops[0].volume <= max_volume:
                     chosen_top = tops[0]
@@ -152,13 +151,13 @@ class Wardrobe:
                     daily_plan.append(f"Day {day + 1}: Suitcase full! Couldn't pack a Bottom.")
                     continue
 
-            # Tracking item usage frequency for analytics
+            # Count how many times we used the item
             chosen_top.usage_count += 1
             chosen_bottom.usage_count += 1
             daily_plan.append(f"Day {day + 1}: {chosen_top.name} + {chosen_bottom.name}")
 
         self.save_to_file()
-        # Efficiency Metric: Compares unique items packed vs. total daily slots
+        # Efficiency: Shows how much space we saved by reusing clothes
         efficiency = ((len(daily_weather_scores) * 2 - len(packing_list)) / (
                     len(daily_weather_scores) * 2)) * 100 if daily_weather_scores else 0
 

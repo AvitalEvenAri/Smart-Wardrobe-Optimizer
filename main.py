@@ -5,16 +5,15 @@ from models import ClothingItem
 from wardrobe_manager import Wardrobe
 from weather_service import WeatherService
 
-# Initialize Colorama for ANSI escape character support on Windows and Mac
+# Setup Colorama to work on Windows and Mac
 init(autoreset=True)
 
-# Load environment variables for secure API key management
+# Load the secret API key from the .env file
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
-
 def display_menu():
-    """Renders the main command-line interface menu."""
+    """Shows the main menu to the user."""
     print(Fore.CYAN + Style.BRIGHT + "\n--- My Smart Wardrobe (Engineering Edition) ---")
     print(f"{Fore.YELLOW}1.{Fore.WHITE} Add a new item")
     print(f"{Fore.YELLOW}2.{Fore.WHITE} Get an outfit suggestion (Personalized)")
@@ -25,14 +24,13 @@ def display_menu():
     print(f"{Fore.RED}7.{Fore.WHITE} Exit")
     return input(Fore.GREEN + "Choose an option: " + Style.RESET_ALL)
 
-
 def main():
-    """Main application orchestrator handling the user interaction loop."""
+    """The main part of the program that runs everything."""
     if not API_KEY:
         print(Fore.RED + "Error: API Key not found. Please check your .env file.")
         return
 
-    # Initialize core services
+    # Create the wardrobe and weather service objects
     my_wardrobe = Wardrobe()
     weather_service = WeatherService(API_KEY)
 
@@ -40,7 +38,7 @@ def main():
         choice = display_menu()
 
         if choice == '1':
-            # Data Entry: Capture metadata for a new ClothingItem
+            # Get details from the user for a new clothing item
             name = input("Item name: ")
             cat = input("Category (Top/Bottom): ")
             color = input("Color: ")
@@ -52,7 +50,7 @@ def main():
                 print(Fore.RED + "Invalid input. Please enter numbers.")
 
         elif choice == '2':
-            # Personalized Recommendation Engine with Reinforcement Feedback
+            # Suggest an outfit and ask if the user likes it
             city = input("Enter city: ")
             score = weather_service.get_weather_score(city)
             if score:
@@ -66,7 +64,7 @@ def main():
                         print(f"{Fore.WHITE}Top:    {top}")
                         print(f"{Fore.WHITE}Bottom: {bottom}")
 
-                        # Capturing feedback to refine the User Preference Engine
+                        # Get feedback to learn what the user likes
                         feedback = input(Fore.CYAN + "\nDid you like this suggestion? (y/n): ").lower()
                         if feedback == 'y':
                             my_wardrobe.update_preference(top, True)
@@ -84,7 +82,7 @@ def main():
                 print(Fore.RED + "Could not retrieve weather data.")
 
         elif choice == '3':
-            # Display current state of the wardrobe database
+            # Show all the clothes in the wardrobe
             print(Fore.BLUE + Style.BRIGHT + "\n--- Current Wardrobe ---")
             if not my_wardrobe.items:
                 print("Your wardrobe is empty.")
@@ -93,12 +91,12 @@ def main():
                     print(item)
 
         elif choice == '4':
-            # Item Deletion Logic
+            # Remove a specific item by its name
             name = input("Enter the name of the item to remove: ")
             my_wardrobe.remove_item(name)
 
         elif choice == '5':
-            # Constraint-Based Strategic Packing Optimization
+            # Plan what to pack for a trip based on suitcase space
             city = input("Destination city: ")
             try:
                 days = int(input("Duration (1-5 days): "))
@@ -134,14 +132,13 @@ def main():
                 print(Fore.RED + "Invalid input parameters.")
 
         elif choice == '6':
-            # Display Data-Driven Insights
+            # Show interesting facts about the wardrobe
             print(Fore.CYAN + my_wardrobe.get_wardrobe_analytics())
 
         elif choice == '7':
-            # Safe Termination of the application
+            # Close the program
             print(Fore.RED + Style.BRIGHT + "Closing My Smart Wardrobe. Stay Stylish!")
             break
-
 
 if __name__ == "__main__":
     main()

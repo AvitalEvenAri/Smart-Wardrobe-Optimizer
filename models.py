@@ -1,7 +1,7 @@
 class ClothingItem:
     """
-    Represents a single piece of clothing with its physical and stylistic attributes.
-    This class handles automatic volume calculation based on item category.
+    Represents one piece of clothing (like a shirt or pants).
+    It automatically calculates how much space (volume) it takes.
     """
     def __init__(self, name, category, color, weather, formal_level, usage_count=0, volume=None, preference_score=10):
         self.name = name
@@ -12,24 +12,24 @@ class ClothingItem:
         self.usage_count = usage_count
         self.preference_score = preference_score
 
-        # Auto-calculate item volume if not explicitly provided during instantiation
+        # Automatically decide volume if it's not given
         if volume is not None:
             self.volume = volume
         else:
             cat_lower = self.category.lower()
-            # Logic: Coats and heavy items occupy more space (volume = 4)
+            # Big items like coats take more space (4 points)
             if "coat" in self.name.lower() or "heavy" in self.name.lower():
                 self.volume = 4
-            # Standard Tops occupy minimal space (volume = 1)
+            # Small tops take little space (1 point)
             elif "top" in cat_lower:
                 self.volume = 1
-            # Bottoms and other categories occupy moderate space (volume = 2)
+            # Pants and others take medium space (2 points)
             else:
                 self.volume = 2
 
     def __repr__(self):
         """
-        Provides a formatted string representation for the CLI wardrobe display.
-        Uses string padding to ensure clean alignment in the terminal.
+        How the item looks when we print it in a list.
+        It uses spacing to make sure the columns are straight.
         """
         return f"{self.category.capitalize():<8} | {self.name:<15} ({self.color:<8}) | Vol: {self.volume} | Worn: {self.usage_count:<3} | Score: {self.preference_score}"
